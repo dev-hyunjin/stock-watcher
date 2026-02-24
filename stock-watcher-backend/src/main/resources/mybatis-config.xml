@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+    <!-- 전역 설정 -->
+    <settings>
+        <!-- tbl_user_id -> userId 같은 매핑 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+
+        <!-- NULL 컬럼도 명시적으로 세팅되게(필요 시) -->
+        <setting name="callSettersOnNulls" value="true"/>
+
+        <!-- lazy loading(필요 시) -->
+        <setting name="lazyLoadingEnabled" value="false"/>
+    </settings>
+
+    <!-- (선택) Alias: XML에서 타입을 짧게 쓰고 싶으면 사용 -->
+    <typeAliases>
+        <package name="com.app.stockwatcher.dto"/>
+    </typeAliases>
+
+</configuration>

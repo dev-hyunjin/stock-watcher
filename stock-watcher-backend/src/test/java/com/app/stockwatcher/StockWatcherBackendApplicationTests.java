@@ -1,4 +1,4 @@
-package com.app.stockwatcherbackend;
+package com.app.stockwatcher;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

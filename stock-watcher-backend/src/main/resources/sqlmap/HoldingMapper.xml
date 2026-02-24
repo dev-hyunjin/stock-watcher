@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.app.stockwatcher.mapper.HoldingMapper">
+
+    <select id="selectOpenHoldings" parameterType="long"
+            resultType="com.app.stockwatcher.dto.HoldingDto">
+
+        WITH latest_snapshot AS (
+        SELECT DISTINCT ON (position_id)
+        position_id,
+        trade_date,
+        close_price,
+        max_close_since_buy,
+        trailing_stop_price
+        FROM tbl_strategy_snapshot
+        ORDER BY position_id, trade_date DESC
+        )
+        SELECT
+        p.position_id                       AS positionId,
+        i.symbol                            AS symbol,
+        p.buy_date                          AS buyDate,
+        p.buy_price                         AS buyPrice,
+        ls.max_close_since_buy              AS maxClose,
+        CAST(0.9000 AS NUMERIC(6,4))        AS trailRatio,
+        ls.trailing_stop_price              AS trailStop,
+        p.state                             AS status,
+        p.updated_at                        AS updatedAt
+        FROM tbl_position p
+        JOIN tbl_instrument i
+        ON i.instrument_id = p.instrument_id
+        LEFT JOIN latest_snapshot ls
+        ON ls.position_id = p.position_id
+        WHERE p.user_id = #{userId}
+        AND p.state IN ('WAIT_BUY', 'HOLDING')
+        ORDER BY p.updated_at DESC
+
+    </select>
+
+</mapper>

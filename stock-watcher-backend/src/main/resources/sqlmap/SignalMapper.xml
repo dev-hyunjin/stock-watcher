@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.app.stockwatcher.mapper.SignalMapper">
+
+    <select id="selectSignals" parameterType="com.app.stockwatcher.dto.SignalSearchParam"
+            resultType="com.app.stockwatcher.dto.SignalDto">
+
+        SELECT
+            a.alert_id                       AS signalId,
+            a.created_at                     AS signalTime,
+            a.trade_date                     AS date,
+            i.symbol                         AS symbol,
+            CASE a.alert_type
+                WHEN 'BUY_SIGNAL' THEN 'BUY'
+                WHEN 'SELL_SIGNAL' THEN 'SELL'
+                ELSE a.alert_type
+            END                              AS type,
+            a.trigger_price                  AS close,
+            a.trigger_price                  AS triggerPrice,
+            a.message                        AS note
+        FROM tbl_alert a
+        JOIN tbl_position p  ON p.position_id = a.position_id
+        JOIN tbl_instrument i ON i.instrument_id = p.instrument_id
+        WHERE a.user_id = #{userId}
+
+        <if test="type != null and type != ''">
+            AND (
+            (#{type} = 'BUY'  AND a.alert_type = 'BUY_SIGNAL')
+            OR
+            (#{type} = 'SELL' AND a.alert_type = 'SELL_SIGNAL')
+            )
+        </if>
+
+        <if test="symbol != null and symbol != ''">
+            AND i.symbol = #{symbol}
+        </if>
+
+        <if test="from != null">
+            AND a.trade_date <![CDATA[ >= ]]> #{from}
+        </if>
+
+        <if test="to != null">
+            AND a.trade_date <![CDATA[ <= ]]> #{to}
+        </if>
+
+        ORDER BY a.created_at DESC
+        LIMIT #{limit}
+
+    </select>
+
+</mapper>

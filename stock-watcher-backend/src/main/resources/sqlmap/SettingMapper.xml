@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.app.stockwatcher.mapper.SettingMapper">
+
+    <insert id="insertNotificationSettingIfNotExists">
+        INSERT INTO tbl_user_notification_setting (
+        user_id,
+        in_app_enabled,
+        email_enabled,
+        email_address,
+        telegram_enabled,
+        telegram_chat_id,
+        slack_enabled,
+        slack_webhook_url,
+        created_at,
+        updated_at
+        )
+        SELECT
+        #{userId},
+        TRUE,
+        FALSE,
+        NULL,
+        FALSE,
+        NULL,
+        FALSE,
+        NULL,
+        NOW(),
+        NOW()
+        WHERE NOT EXISTS (
+        SELECT 1
+        FROM tbl_user_notification_setting
+        WHERE user_id = #{userId}
+        )
+    </insert>
+
+    <select id="selectNotificationSetting" resultType="com.app.stockwatcher.mapper.SettingMapper$NotificationSettingRow">
+        SELECT
+        in_app_enabled     AS inAppEnabled,
+        email_enabled      AS emailEnabled,
+        email_address      AS emailAddress,
+        telegram_enabled   AS telegramEnabled,
+        telegram_chat_id   AS telegramChatId,
+        slack_enabled      AS slackEnabled,
+        slack_webhook_url  AS slackWebhookUrl,
+        updated_at         AS updatedAt
+        FROM tbl_user_notification_setting
+        WHERE user_id = #{userId}
+    </select>
+
+    <update id="updateNotificationSetting">
+        UPDATE tbl_user_notification_setting
+        SET
+        in_app_enabled     = COALESCE(#{req.inAppEnabled}, in_app_enabled),
+        email_enabled      = COALESCE(#{req.emailEnabled}, email_enabled),
+        email_address      = COALESCE(#{req.emailAddress}, email_address),
+        telegram_enabled   = COALESCE(#{req.telegramEnabled}, telegram_enabled),
+        telegram_chat_id   = COALESCE(#{req.telegramChatId}, telegram_chat_id),
+        slack_enabled      = COALESCE(#{req.slackEnabled}, slack_enabled),
+        slack_webhook_url  = COALESCE(#{req.slackWebhookUrl}, slack_webhook_url),
+        updated_at         = NOW()
+        WHERE user_id = #{userId}
+    </update>
+
+</mapper>
