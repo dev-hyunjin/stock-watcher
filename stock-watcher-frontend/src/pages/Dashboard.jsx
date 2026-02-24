@@ -13,8 +13,8 @@ export default function Dashboard() {
   if (signals.isError) return <ErrorState error={signals.error} />;
   if (holdings.isError) return <ErrorState error={holdings.error} />;
 
-  const signalItems = signals.data?.items ?? signals.data ?? [];
-  const holdingItems = holdings.data?.items ?? holdings.data ?? [];
+  const signalItems = signals.data?.items ?? [];
+  const holdingItems = holdings.data?.items ?? [];
 
   const buyCount = signalItems.filter((x) => x.type === "BUY").length;
   const sellCount = signalItems.filter((x) => x.type === "SELL").length;
@@ -33,8 +33,8 @@ export default function Dashboard() {
       </div>
 
       <div className="grid-2">
-        <StatCard label="트래킹 종목" value={holdingItems.length} hint="보유/감시 대상" />
-        <StatCard label="알림" value={"준비중"} hint="Slack/Email 연동 예정" />
+        <StatCard label="트래킹 종목" value={holdingItems.length} hint="열려있는 포지션" />
+        <StatCard label="알림" value={"연동됨"} hint="백엔드 API 연결" />
       </div>
     </div>
   );

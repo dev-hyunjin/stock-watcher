@@ -10,10 +10,13 @@ export default function Holdings() {
   if (q.isLoading) return <Loading />;
   if (q.isError) return <ErrorState error={q.error} />;
 
-  const rows = q.data?.items ?? q.data ?? [];
+  const rows = q.data?.items ?? []; // ✅ {items:[]}
   return (
     <div className="page">
-      <PageTitle title="보유/트래킹" desc="매수 이후 최고가, 트레일링 스탑 기준가 등을 추적합니다." />
+      <PageTitle
+        title="보유/트래킹"
+        desc="매수 이후 최고가, 트레일링 스탑 기준가 등을 추적합니다."
+      />
       <HoldingsGrid rows={rows} />
     </div>
   );
